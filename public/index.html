@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ServeTogether — Share Food, Spread Joy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --glass-bg: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.18);
+      --glass-blur: blur(18px);
+      --accent-green: #4ade80;
+      --accent-purple: #a78bfa;
+      --accent-pink: #f472b6;
+      --accent-teal: #2dd4bf;
+      --text-primary: #f0fdf4;
+      --text-muted: rgba(240,253,244,0.6);
+      --card-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --radius: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0a0a1a;
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATED BACKGROUND ── */
+    .bg-canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 20% 20%, #1a0a3a 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, #0a2a1a 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 50%, #0d0d2b 0%, #0a0a1a 100%);
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35;
+      animation: float 12s ease-in-out infinite;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #7c3aed; top: -100px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 400px; height: 400px; background: #059669; top: 50%; right: -80px; animation-delay: -4s; }
+    .blob-3 { width: 300px; height: 300px; background: #db2777; bottom: 10%; left: 30%; animation-delay: -8s; }
+    .blob-4 { width: 250px; height: 250px; background: #0891b2; top: 40%; left: 20%; animation-delay: -2s; }
+
+    @keyframes float {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-30px) scale(1.05); }
+      66% { transform: translate(-20px,20px) scale(0.95); }
+    }
+
+    /* ── LAYOUT ── */
+    .app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── NAVBAR ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-teal), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .logo span { font-size: 1.8rem; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-tag {
+      padding: 6px 14px; border-radius: 50px;
+      background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3);
+      color: var(--accent-green); font-size: 0.8rem; font-weight: 500;
+    }
+    .btn-donate-nav {
+      padding: 10px 24px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-teal));
+      color: #0a0a1a; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      box-shadow: 0 0 20px rgba(74,222,128,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-donate-nav:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(74,222,128,0.6); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center; padding: 80px 20px 50px;
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border-radius: 50px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur);
+      font-size: 0.85rem; color: var(--text-muted);
+    }
+    .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .hero h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800; line-height: 1.1; letter-spacing: -2px;
+      max-width: 700px;
+    }
+    .hero h1 .g1 { background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero h1 .g2 { background: linear-gradient(135deg, var(--accent-green), var(--accent-teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 480px; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      padding: 14px 36px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-teal) 100%);
+      color: #0a0a1a; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+      box-shadow: 0 0 30px rgba(74,222,128,0.5); transition: all 0.25s;
+    }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 50px rgba(74,222,128,0.7); }
+    .btn-secondary {
+      padding: 14px 36px; border-radius: 50px; cursor: pointer;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur); color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem;
+      transition: all 0.25s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+      padding: 0 20px 50px;
+    }
+    .stat-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 22px; border-radius: 50px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur);
+    }
+    .stat-pill .icon { font-size: 1.2rem; }
+    .stat-pill .val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent-green); }
+    .stat-pill .lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* ── MAIN CONTENT ── */
+    .content { display: flex; gap: 28px; padding: 0 40px 80px; max-width: 1300px; margin: 0 auto; width: 100%; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+    .glass-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--card-shadow);
+    }
+    .sidebar-title {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .filter-btn {
+      display: block; width: 100%; padding: 10px 14px; margin-bottom: 8px;
+      border-radius: 12px; border: 1px solid transparent; cursor: pointer;
+      background: rgba(255,255,255,0.04); color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; text-align: left;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.35);
+      color: var(--accent-green); padding-left: 20px;
+    }
+    .recent-item {
+      display: flex; align-items: center; gap: 12px; padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .recent-item:last-child { border-bottom: none; }
+    .recent-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; }
+    .recent-text { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+    .recent-text strong { color: var(--text-primary); display: block; font-size: 0.88rem; }
+
+    /* ── FOOD GRID ── */
+    .feed { flex: 1; }
+    .feed-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    }
+    .feed-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur); border-radius: 50px; padding: 8px 16px;
+    }
+    .search-wrap input {
+      background: none; border: none; outline: none; color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; width: 180px;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .food-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;
+    }
+
+    /* ── FOOD CARD ── */
+    .food-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur); border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--card-shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .food-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(74,222,128,0.1);
+      border-color: rgba(74,222,128,0.3);
+    }
+    .card-img-wrap { position: relative; height: 160px; overflow: hidden; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .food-card:hover .card-img-wrap img { transform: scale(1.08); }
+    .card-img-shimmer {
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .card-badge {
+      position: absolute; top: 10px; right: 10px;
+      padding: 4px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 600;
+      backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
+    }
+    .badge-fresh { background: rgba(74,222,128,0.2); color: var(--accent-green); }
+    .badge-today { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .card-body { padding: 16px; }
+    .card-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+    .card-meta { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .card-meta span { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .donor-info { display: flex; align-items: center; gap: 8px; }
+    .donor-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+      display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;
+    }
+    .donor-name { font-size: 0.8rem; color: var(--text-muted); }
+    .btn-claim {
+      padding: 7px 16px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-teal));
+      color: #0a0a1a; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .btn-claim:hover { transform: scale(1.05); box-shadow: 0 0 16px rgba(74,222,128,0.5); }
+
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: rgba(15,15,35,0.92); border: 1px solid var(--glass-border);
+      backdrop-filter: blur(30px); border-radius: 28px;
+      padding: 44px 40px; max-width: 420px; width: 90%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      transform: translateY(30px) scale(0.95); transition: transform 0.3s;
+      position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer;
+    }
+    .modal-icon { font-size: 2.5rem; margin-bottom: 14px; text-align: center; display: block; }
+    .modal h2 {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      text-align: center; margin-bottom: 8px;
+    }
+    .modal p { color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 28px; line-height: 1.6; }
+    .btn-google {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.06); color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-google:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .btn-google img { width: 22px; }
+    .modal-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .modal-divider hr { flex: 1; border: none; border-top: 1px solid var(--glass-border); }
+    .modal-divider span { font-size: 0.8rem; color: var(--text-muted); }
+    .btn-email-continue {
+      display: block; width: 100%; padding: 14px; border-radius: 14px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-teal));
+      color: #0a0a1a; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-email-continue:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(74,222,128,0.5); }
+    .modal-footer { text-align: center; margin-top: 16px; font-size: 0.78rem; color: var(--text-muted); }
+
+    /* ── DONATE MODAL ── */
+    .donate-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-group label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border);
+      color: var(--text-primary); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: rgba(74,222,128,0.5);
+    }
+    .form-group select option { background: #1a1a3a; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: rgba(15,25,15,0.95); border: 1px solid rgba(74,222,128,0.4);
+      backdrop-filter: blur(20px); border-radius: 50px; padding: 14px 28px;
+      color: var(--accent-green); font-weight: 600; z-index: 300;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 900px) {
+      nav { padding: 14px 20px; }
+      .content { flex-direction: column; padding: 0 20px 60px; }
+      .sidebar { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-canvas">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<div class="app">
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo"><span>🌿</span> ServeTogether</div>
+    <div class="nav-right">
+      <span class="nav-tag">🟢 23 Live Listings</span>
+      <button class="btn-donate-nav" onclick="openDonateModal()">+ Donate Food</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge"><span class="dot"></span> Community Food Sharing Platform</div>
+    <h1>
+      <span class="g1">Don't Waste,</span><br>
+      <span class="g2">Share & Serve More</span>
+    </h1>
+    <p>Connect surplus food with people who need it. Reduce waste, build community, and make every meal count.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openDonateModal()">🍱 Donate Food Now</button>
+      <button class="btn-secondary" onclick="scrollToFeed()">Browse Listings →</button>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-pill"><span class="icon">🍽️</span><span class="val" id="stat-meals">1,248</span><span class="lbl">Meals Shared</span></div>
+    <div class="stat-pill"><span class="icon">👥</span><span class="val" id="stat-donors">384</span><span class="lbl">Active Donors</span></div>
+    <div class="stat-pill"><span class="icon">📍</span><span class="val">12</span><span class="lbl">Cities</span></div>
+    <div class="stat-pill"><span class="icon">♻️</span><span class="val" id="stat-kg">920<small style="font-size:0.7em">kg</small></span><span class="lbl">Waste Saved</span></div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content" id="feed-section">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="glass-card">
+        <div class="sidebar-title">⚡ Live Updates</div>
+        <div id="live-feed">
+          <div class="recent-item"><span class="recent-dot"></span><div class="recent-text"><strong>Biryani (5 servings)</strong>Sector 14, Gurugram — 2 min ago</div></div>
+          <div class="recent-item"><span class="recent-dot" style="background:var(--accent-teal)"></span><div class="recent-text"><strong>Fresh Rotis claimed!</strong>DLF Phase 2 — 5 min ago</div></div>
+          <div class="recent-item"><span class="recent-dot" style="background:var(--accent-purple)"></span><div class="recent-text"><strong>Dal + Rice donated</strong>Cyber City — 12 min ago</div></div>
+        </div>
+      </div>
+      <div class="glass-card" style="background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(45,212,191,0.08)); border-color: rgba(74,222,128,0.25);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:10px;">Want to help more?</div>
+        <p style="font-size:0.83rem;color:var(--text-muted);line-height:1.6;margin-bottom:14px;">Become a Verified Donor and reach 3x more people in your area.</p>
+        <button class="btn-email-continue" style="font-size:0.85rem;padding:10px;" onclick="openAuthModal('donate')">Get Verified →</button>
+      </div>
+    </aside>
+
+    <!-- FEED -->
+    <main class="feed">
+      <div class="feed-header">
+        <div class="feed-title">🗺️ Available Near You</div>
+        <div class="search-wrap">
+          <span>🔍</span>
+          <input type="text" placeholder="Search food..." oninput="searchCards(this.value)" />
+        </div>
+      </div>
+      <div class="food-grid" id="food-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal" onclick="closeModalOutside(event, 'auth-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+    <span class="modal-icon">🌿</span>
+    <h2 id="auth-title">Join ServeTogether</h2>
+    <p id="auth-desc">Sign in to donate food or claim a listing. It only takes a second!</p>
+    <button class="btn-google" onclick="handleGoogleAuth()">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+      Continue with Google
+    </button>
+    <div class="modal-divider"><hr><span>or</span><hr></div>
+    <button class="btn-email-continue" onclick="handleEmailAuth()">Continue with Email</button>
+    <p class="modal-footer">By continuing you agree to our Terms & Privacy Policy</p>
+  </div>
+</div>
+
+<!-- DONATE MODAL -->
+<div class="modal-overlay" id="donate-modal" onclick="closeModalOutside(event, 'donate-modal')">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('donate-modal')">✕</button>
+    <span class="modal-icon">🍱</span>
+    <h2>Donate Food</h2>
+    <p style="margin-bottom:20px;">Fill in the details below and help someone in need today.</p>
+    <div class="donate-form">
+      <div class="form-group">
+        <label>Food Name *</label>
+        <input type="text" id="food-name" placeholder="e.g. Dal Makhani, Bread, Fruits..." />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="food-cat">
+            <option value="cooked">🍛 Cooked Food</option>
+            <option value="raw">🥕 Raw Groceries</option>
+            <option value="bakery">🥐 Bakery</option>
+            <option value="fruits">🍎 Fruits & Veggies</option>
+            <option value="packaged">📦 Packaged</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Servings / Quantity</label>
+          <input type="text" id="food-qty" placeholder="e.g. 4 servings" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Pickup Location</label>
+        <input type="text" id="food-loc" placeholder="Area, City" />
+      </div>
+      <div class="form-group">
+        <label>Description (optional)</label>
+        <textarea id="food-desc" placeholder="Freshly made, allergen info, best before time..."></textarea>
+      </div>
+      <button class="btn-email-continue" onclick="submitDonation()">🚀 List My Donation</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span>✅</span> <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+const UNSPLASH_KEY = 'YOUR_UNSPLASH_ACCESS_KEY'; // Replace with your free key from unsplash.com/developers
+
+const FOOD_DATA = [
+  { id:1, name:'Chicken Biryani', cat:'cooked', qty:'6 servings', loc:'Sector 14, Gurugram', desc:'Freshly made dum biryani. Still warm!', donor:'Riya S.', badge:'fresh', time:'Just now' },
+  { id:2, name:'Assorted Breads & Buns', cat:'bakery', qty:'~20 pieces', loc:'DLF Phase 2', desc:'Unsold stock from bakery. Very fresh.', donor:'Bake Hub', badge:'today', time:'30 min ago' },
+  { id:3, name:'Dal Rice + Sabzi', cat:'cooked', qty:'8 servings', loc:'Cyber City', desc:'Home-cooked meal. Veg & hygienically packed.', donor:'Sharma Ji', badge:'fresh', time:'1 hr ago' },
+  { id:4, name:'Mixed Vegetables', cat:'raw', qty:'~2 kg', loc:'Sector 45', desc:'Fresh veggies from garden. Tomatoes, capsicum, etc.', donor:'GreenThumb', badge:'fresh', time:'2 hr ago' },
+  { id:5, name:'Packaged Biscuits & Snacks', cat:'packaged', qty:'15 packs', loc:'Sohna Road', desc:'Sealed packs, 6 months expiry remaining.', donor:'SnackStore', badge:'today', time:'3 hr ago' },
+  { id:6, name:'Fruit Basket', cat:'fruits', qty:'~3 kg', loc:'Golf Course Rd', desc:'Apples, bananas, guavas. Perfect for a family.', donor:'Priya K.', badge:'fresh', time:'4 hr ago' },
+  { id:7, name:'Paneer Butter Masala', cat:'cooked', qty:'5 servings', loc:'MG Road', desc:'Restaurant surplus. Served warm.', donor:'Taste of India', badge:'today', time:'5 hr ago' },
+  { id:8, name:'Rice & Rajma', cat:'cooked', qty:'4 servings', loc:'Palam Vihar', desc:'Home-cooked Sunday special!', donor:'Mehta Family', badge:'fresh', time:'20 min ago' },
+];
+
+let allCards = [...FOOD_DATA];
+let displayCards = [...FOOD_DATA];
+let pendingAction = null; // 'donate' or 'claim'
+let isLoggedIn = false;
+let currentUser = null;
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+const PHOTO_MAP = {}; // cache unsplash images
+
+async function getPhoto(name, id) {
+  if (PHOTO_MAP[id]) return PHOTO_MAP[id];
+  if (UNSPLASH_KEY === 'YOUR_UNSPLASH_ACCESS_KEY') {
+    // fallback: beautiful food gradient thumbnails
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80',
+      'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80',
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80',
+      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80',
+      'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80',
+      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80',
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80',
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
+    ];
+    PHOTO_MAP[id] = fallbacks[(id - 1) % fallbacks.length];
+    return PHOTO_MAP[id];
+  }
+  try {
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(name + ' food')}&per_page=1&client_id=${UNSPLASH_KEY}`);
+    const data = await res.json();
+    PHOTO_MAP[id] = data.results[0]?.urls?.small || '';
+    return PHOTO_MAP[id];
+  } catch { return ''; }
+}
+
+function renderCards(cards) {
+  const grid = document.getElementById('food-grid');
+  grid.innerHTML = cards.map(f => `
+    <div class="food-card" data-cat="${f.cat}" data-id="${f.id}">
+      <div class="card-img-wrap">
+        <div class="card-img-shimmer" id="shimmer-${f.id}"></div>
+        <img id="img-${f.id}" src="" alt="${f.name}" style="display:none;position:absolute;inset:0;" />
+        <span class="card-badge ${f.badge === 'fresh' ? 'badge-fresh' : 'badge-today'}">
+          ${f.badge === 'fresh' ? '🟢 Fresh' : '🕐 Today'}
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${f.name}</div>
+        <div class="card-meta">
+          <span>📍 ${f.loc}</span>
+          <span>🍽️ ${f.qty}</span>
+          <span>🕒 ${f.time}</span>
+        </div>
+        <div class="card-desc">${f.desc}</div>
+        <div class="card-footer">
+          <div class="donor-info">
+            <div class="donor-avatar">${f.donor[0]}</div>
+            <span class="donor-name">${f.donor}</span>
+          </div>
+          <button class="btn-claim" onclick="handleClaim(${f.id}, '${f.name}')">Claim →</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Load images async
+  cards.forEach(async f => {
+    const url = await getPhoto(f.name, f.id);
+    if (url) {
+      const shimmer = document.getElementById('shimmer-' + f.id);
+      const img = document.getElementById('img-' + f.id);
+      if (shimmer && img) {
+        img.src = url;
+        img.onload = () => { shimmer.style.display = 'none'; img.style.display = 'block'; };
+      }
+    }
+  });
+}
+
+function filterCards(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  displayCards = cat === 'all' ? [...allCards] : allCards.filter(f => f.cat === cat);
+  renderCards(displayCards);
+}
+
+function searchCards(val) {
+  const v = val.toLowerCase();
+  renderCards(v ? displayCards.filter(f =>
+    f.name.toLowerCase().includes(v) || f.loc.toLowerCase().includes(v) || f.desc.toLowerCase().includes(v)
+  ) : displayCards);
+}
+
+function scrollToFeed() {
+  document.getElementById('feed-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+//  AUTH FLOW
+// ─────────────────────────────────────────────
+function openAuthModal(action) {
+  pendingAction = action;
+  const t = document.getElementById('auth-title');
+  const d = document.getElementById('auth-desc');
+  if (action === 'donate') {
+    t.textContent = 'Sign in to Donate';
+    d.textContent = 'Join thousands sharing food in your city. Quick sign-in, big impact.';
+  } else {
+    t.textContent = 'Sign in to Claim';
+    d.textContent = 'Sign in to get the donor\'s contact and coordinate pickup easily.';
+  }
+  openModal('auth-modal');
+}
+
+function handleGoogleAuth() {
+  closeModal('auth-modal');
+  // Simulate Google OAuth success
+  setTimeout(() => {
+    isLoggedIn = true;
+    currentUser = { name: 'You', email: 'user@gmail.com', avatar: 'U' };
+    showToast('🎉 Signed in with Google!');
+    if (pendingAction === 'donate') setTimeout(openDonateModal, 600);
+  }, 400);
+}
+
+function handleEmailAuth() {
+  closeModal('auth-modal');
+  setTimeout(() => {
+    isLoggedIn = true;
+    currentUser = { name: 'You', email: 'user@email.com', avatar: 'U' };
+    showToast('✉️ Signed in with Email!');
+    if (pendingAction === 'donate') setTimeout(openDonateModal, 600);
+  }, 400);
+}
+
+// ─────────────────────────────────────────────
+//  DONATE FLOW
+// ─────────────────────────────────────────────
+function openDonateModal() {
+  if (!isLoggedIn) { openAuthModal('donate'); return; }
+  openModal('donate-modal');
+}
+
+function submitDonation() {
+  const name = document.getElementById('food-name').value.trim();
+  const qty = document.getElementById('food-qty').value.trim();
+  const loc = document.getElementById('food-loc').value.trim();
+  const desc = document.getElementById('food-desc').value.trim();
+  const cat = document.getElementById('food-cat').value;
+  if (!name || !qty || !loc) { showToast('⚠️ Please fill all required fields', true); return; }
+  const newCard = {
+    id: allCards.length + 1, name, cat, qty, loc,
+    desc: desc || 'Freshly donated!', donor: currentUser?.name || 'You',
+    badge: 'fresh', time: 'Just now'
+  };
+  allCards.unshift(newCard);
+  displayCards.unshift(newCard);
+  renderCards(displayCards);
+  closeModal('donate-modal');
+  showToast('🎉 Food listed! You\'re a hero!');
+  // Update stats
+  const el = document.getElementById('stat-meals');
+  el.textContent = (parseInt(el.textContent.replace(',', '')) + parseInt(qty) || 1).toLocaleString();
+  // Clear form
+  ['food-name','food-qty','food-loc','food-desc'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ─────────────────────────────────────────────
+//  CLAIM FLOW
+// ─────────────────────────────────────────────
+function handleClaim(id, name) {
+  if (!isLoggedIn) { openAuthModal('claim'); return; }
+  showToast(`📞 Donor contact sent for "${name}"!`);
+  // Remove card after claiming
+  setTimeout(() => {
+    allCards = allCards.filter(f => f.id !== id);
+    displayCards = displayCards.filter(f => f.id !== id);
+    renderCards(displayCards);
+  }, 1200);
+}
+
+// ─────────────────────────────────────────────
+//  MODAL UTILS
+// ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+
+// ─────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, warn) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.style.borderColor = warn ? 'rgba(251,191,36,0.4)' : 'rgba(74,222,128,0.4)';
+  t.style.color = warn ? '#fbbf24' : 'var(--accent-green)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─────────────────────────────────────────────
+//  LIVE FEED SIMULATION
+// ─────────────────────────────────────────────
+const liveMsgs = [
+  ['🍛 Palak Paneer donated', 'Sector 29, Gurugram'],
+  ['🥗 Salad Bowl claimed!', 'DLF Phase 3'],
+  ['🍰 Cake (12 slices) listed', 'Sushant Lok'],
+  ['🥐 Croissants added', 'Cyber City'],
+  ['🫙 Pickles & Achaar listed', 'Palam Vihar'],
+];
+let liveIdx = 0;
+setInterval(() => {
+  const feed = document.getElementById('live-feed');
+  const colors = ['var(--accent-green)', 'var(--accent-teal)', 'var(--accent-purple)', 'var(--accent-pink)'];
+  const [name, loc] = liveMsgs[liveIdx % liveMsgs.length];
+  const item = document.createElement('div');
+  item.className = 'recent-item';
+  item.style.opacity = '0';
+  item.innerHTML = `<span class="recent-dot" style="background:${colors[liveIdx%colors.length]}"></span><div class="recent-text"><strong>${name}</strong>${loc} — just now</div>`;
+  feed.insertBefore(item, feed.firstChild);
+  setTimeout(() => item.style.cssText += 'opacity:1;transition:opacity 0.4s', 50);
+  if (feed.children.length > 5) feed.removeChild(feed.lastChild);
+  liveIdx++;
+}, 15000);
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+renderCards(allCards);
+</script>
+</body>
+</html>
