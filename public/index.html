@@ -341,6 +341,7 @@
     <div class="logo"><span>🌿</span> ServeTogether</div>
     <div class="nav-right">
       <span class="nav-tag">🟢 23 Live Listings</span>
+      <button id="btn-my-donations" onclick="openDashboard()" style="display:none;padding:10px 20px;border-radius:50px;border:1px solid rgba(167,139,250,0.4);background:rgba(167,139,250,0.12);color:var(--accent-purple);font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">📋 My Donations</button>
       <button class="btn-donate-nav" onclick="openDonateModal()">+ Donate Food</button>
     </div>
   </nav>
@@ -404,6 +405,37 @@
   </div>
 </div>
 
+<!-- DONOR DASHBOARD MODAL -->
+<div class="modal-overlay" id="dashboard-modal" onclick="closeModalOutside(event,'dashboard-modal')" style="z-index:210;align-items:flex-start;padding-top:60px;">
+  <div class="modal" style="max-width:600px;width:95%;max-height:80vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeModal('dashboard-modal')">✕</button>
+    <span class="modal-icon">📋</span>
+    <h2 style="margin-bottom:4px;">My Donations</h2>
+    <p id="dash-user-name" style="color:var(--text-muted);margin-bottom:20px;font-size:0.9rem;"></p>
+    <div id="dashboard-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal" onclick="closeModalOutside(event,'edit-modal')" style="z-index:220;">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
+    <span class="modal-icon">✏️</span>
+    <h2 style="margin-bottom:20px;">Edit Listing</h2>
+    <input type="hidden" id="edit-id" />
+    <div class="donate-form">
+      <div class="form-group"><label>Food Name</label><input type="text" id="edit-name" /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Quantity</label><input type="text" id="edit-qty" /></div>
+        <div class="form-group"><label>Location</label><input type="text" id="edit-loc" /></div>
+      </div>
+      <div class="form-group"><label>Phone</label><input type="tel" id="edit-phone" /></div>
+      <div class="form-group"><label>Description</label><textarea id="edit-desc"></textarea></div>
+      <button class="btn-email-continue" onclick="saveEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="auth-modal" onclick="closeModalOutside(event, 'auth-modal')">
   <div class="modal">
@@ -454,11 +486,36 @@
         <input type="text" id="food-loc" placeholder="Area, City" />
       </div>
       <div class="form-group">
+        <label>Your Phone Number *</label>
+        <input type="tel" id="food-phone" placeholder="e.g. 9876543210" maxlength="10" />
+      </div>
+      <div class="form-group">
         <label>Description (optional)</label>
         <textarea id="food-desc" placeholder="Freshly made, allergen info, best before time..."></textarea>
       </div>
       <button class="btn-email-continue" onclick="submitDonation()">🚀 List My Donation</button>
     </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contact-modal" style="z-index:250;">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <span class="modal-icon">📞</span>
+    <h2 id="contact-food-name" style="margin-bottom:8px;">Food Name</h2>
+    <p style="margin-bottom:24px;color:var(--text-muted);">Yahan donor ki contact details hain. Seedha call karke pickup coordinate karo!</p>
+    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">Donor ka Naam</div>
+      <div id="contact-donor-name" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:16px;"></div>
+      <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">Phone Number</div>
+      <div id="contact-phone" style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:var(--accent-green);letter-spacing:2px;"></div>
+    </div>
+    <a id="contact-call-btn" href="" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--accent-green),var(--accent-teal));color:#0a0a1a;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:12px;">
+      📲 Call Donor Now
+    </a>
+    <button onclick="closeModal('contact-modal')" style="width:100%;padding:12px;border-radius:14px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-muted);font-family:'DM Sans',sans-serif;cursor:pointer;font-size:0.9rem;">
+      Close
+    </button>
   </div>
 </div>
 
@@ -474,14 +531,14 @@
 const UNSPLASH_KEY = 'YOUR_UNSPLASH_ACCESS_KEY'; // Replace with your free key from unsplash.com/developers
 
 const FOOD_DATA = [
-  { id:1, name:'Chicken Biryani', cat:'cooked', qty:'6 servings', loc:'Sector 14, Gurugram', desc:'Freshly made dum biryani. Still warm!', donor:'Riya S.', badge:'fresh', time:'Just now' },
-  { id:2, name:'Assorted Breads & Buns', cat:'bakery', qty:'~20 pieces', loc:'DLF Phase 2', desc:'Unsold stock from bakery. Very fresh.', donor:'Bake Hub', badge:'today', time:'30 min ago' },
-  { id:3, name:'Dal Rice + Sabzi', cat:'cooked', qty:'8 servings', loc:'Cyber City', desc:'Home-cooked meal. Veg & hygienically packed.', donor:'Sharma Ji', badge:'fresh', time:'1 hr ago' },
-  { id:4, name:'Mixed Vegetables', cat:'raw', qty:'~2 kg', loc:'Sector 45', desc:'Fresh veggies from garden. Tomatoes, capsicum, etc.', donor:'GreenThumb', badge:'fresh', time:'2 hr ago' },
-  { id:5, name:'Packaged Biscuits & Snacks', cat:'packaged', qty:'15 packs', loc:'Sohna Road', desc:'Sealed packs, 6 months expiry remaining.', donor:'SnackStore', badge:'today', time:'3 hr ago' },
-  { id:6, name:'Fruit Basket', cat:'fruits', qty:'~3 kg', loc:'Golf Course Rd', desc:'Apples, bananas, guavas. Perfect for a family.', donor:'Priya K.', badge:'fresh', time:'4 hr ago' },
-  { id:7, name:'Paneer Butter Masala', cat:'cooked', qty:'5 servings', loc:'MG Road', desc:'Restaurant surplus. Served warm.', donor:'Taste of India', badge:'today', time:'5 hr ago' },
-  { id:8, name:'Rice & Rajma', cat:'cooked', qty:'4 servings', loc:'Palam Vihar', desc:'Home-cooked Sunday special!', donor:'Mehta Family', badge:'fresh', time:'20 min ago' },
+  { id:1, name:'Chicken Biryani', cat:'cooked', qty:'6 servings', loc:'Sector 14, Gurugram', desc:'Freshly made dum biryani. Still warm!', donor:'Riya S.', phone:'9811234567', badge:'fresh', time:'Just now' },
+  { id:2, name:'Assorted Breads & Buns', cat:'bakery', qty:'~20 pieces', loc:'DLF Phase 2', desc:'Unsold stock from bakery. Very fresh.', donor:'Bake Hub', phone:'9822345678', badge:'today', time:'30 min ago' },
+  { id:3, name:'Dal Rice + Sabzi', cat:'cooked', qty:'8 servings', loc:'Cyber City', desc:'Home-cooked meal. Veg & hygienically packed.', donor:'Sharma Ji', phone:'9833456789', badge:'fresh', time:'1 hr ago' },
+  { id:4, name:'Mixed Vegetables', cat:'raw', qty:'~2 kg', loc:'Sector 45', desc:'Fresh veggies from garden. Tomatoes, capsicum, etc.', donor:'GreenThumb', phone:'9844567890', badge:'fresh', time:'2 hr ago' },
+  { id:5, name:'Packaged Biscuits & Snacks', cat:'packaged', qty:'15 packs', loc:'Sohna Road', desc:'Sealed packs, 6 months expiry remaining.', donor:'SnackStore', phone:'9855678901', badge:'today', time:'3 hr ago' },
+  { id:6, name:'Fruit Basket', cat:'fruits', qty:'~3 kg', loc:'Golf Course Rd', desc:'Apples, bananas, guavas. Perfect for a family.', donor:'Priya K.', phone:'9866789012', badge:'fresh', time:'4 hr ago' },
+  { id:7, name:'Paneer Butter Masala', cat:'cooked', qty:'5 servings', loc:'MG Road', desc:'Restaurant surplus. Served warm.', donor:'Taste of India', phone:'9877890123', badge:'today', time:'5 hr ago' },
+  { id:8, name:'Rice & Rajma', cat:'cooked', qty:'4 servings', loc:'Palam Vihar', desc:'Home-cooked Sunday special!', donor:'Mehta Family', phone:'9888901234', badge:'fresh', time:'20 min ago' },
 ];
 
 let allCards = [...FOOD_DATA];
@@ -532,7 +589,7 @@ function renderCards(cards) {
         </span>
       </div>
       <div class="card-body">
-        <div class="card-name">${f.name}</div>
+        <div class="card-name">${f.name || 'Food Item'}</div>
         <div class="card-meta">
           <span>📍 ${f.loc}</span>
           <span>🍽️ ${f.qty}</span>
@@ -541,8 +598,8 @@ function renderCards(cards) {
         <div class="card-desc">${f.desc}</div>
         <div class="card-footer">
           <div class="donor-info">
-            <div class="donor-avatar">${f.donor[0]}</div>
-            <span class="donor-name">${f.donor}</span>
+            <div class="donor-avatar">${(f.donor || 'U')[0]}</div>
+            <span class="donor-name">${f.donor || 'Anonymous'}</span>
           </div>
           <button class="btn-claim" onclick="handleClaim(${f.id}, '${f.name}')">Claim →</button>
         </div>
@@ -601,10 +658,10 @@ function openAuthModal(action) {
 
 function handleGoogleAuth() {
   closeModal('auth-modal');
-  // Simulate Google OAuth success
   setTimeout(() => {
     isLoggedIn = true;
     currentUser = { name: 'You', email: 'user@gmail.com', avatar: 'U' };
+    document.getElementById('btn-my-donations').style.display = 'block';
     showToast('🎉 Signed in with Google!');
     if (pendingAction === 'donate') setTimeout(openDonateModal, 600);
   }, 400);
@@ -615,9 +672,81 @@ function handleEmailAuth() {
   setTimeout(() => {
     isLoggedIn = true;
     currentUser = { name: 'You', email: 'user@email.com', avatar: 'U' };
+    document.getElementById('btn-my-donations').style.display = 'block';
     showToast('✉️ Signed in with Email!');
     if (pendingAction === 'donate') setTimeout(openDonateModal, 600);
   }, 400);
+}
+
+// ─────────────────────────────────────────────
+//  DONOR DASHBOARD
+// ─────────────────────────────────────────────
+function openDashboard() {
+  const myDonations = allCards.filter(f => f.donor === (currentUser?.name || 'You'));
+  document.getElementById('dash-user-name').textContent = `Logged in as: ${currentUser?.email || ''}`;
+  const list = document.getElementById('dashboard-list');
+  if (myDonations.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">
+      <div style="font-size:2rem;margin-bottom:12px;">🍽️</div>
+      <div>Abhi tak koi donation nahi ki. Donate karo!</div>
+    </div>`;
+  } else {
+    list.innerHTML = myDonations.map(f => `
+      <div style="background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">${f.name}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">📍 ${f.loc} &nbsp;|&nbsp; 🍽️ ${f.qty} &nbsp;|&nbsp; 🕒 ${f.time}</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">📞 ${f.phone || 'N/A'}</div>
+        </div>
+        <span style="padding:5px 12px;border-radius:50px;font-size:0.75rem;font-weight:600;background:rgba(74,222,128,0.15);color:var(--accent-green);border:1px solid rgba(74,222,128,0.3);">🟢 Available</span>
+        <div style="display:flex;gap:8px;">
+          <button onclick="openEdit(${f.id})" style="padding:8px 16px;border-radius:10px;border:1px solid rgba(167,139,250,0.4);background:rgba(167,139,250,0.1);color:var(--accent-purple);font-family:'Syne',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;">✏️ Edit</button>
+          <button onclick="deleteCard(${f.id})" style="padding:8px 16px;border-radius:10px;border:1px solid rgba(244,114,182,0.4);background:rgba(244,114,182,0.1);color:var(--accent-pink);font-family:'Syne',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;">🗑️ Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  openModal('dashboard-modal');
+}
+
+function openEdit(id) {
+  const f = allCards.find(c => c.id === id);
+  if (!f) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = f.name;
+  document.getElementById('edit-qty').value = f.qty;
+  document.getElementById('edit-loc').value = f.loc;
+  document.getElementById('edit-phone').value = f.phone || '';
+  document.getElementById('edit-desc').value = f.desc;
+  openModal('edit-modal');
+}
+
+function saveEdit() {
+  const id = parseInt(document.getElementById('edit-id').value);
+  const idx = allCards.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  allCards[idx] = {
+    ...allCards[idx],
+    name: document.getElementById('edit-name').value.trim(),
+    qty: document.getElementById('edit-qty').value.trim(),
+    loc: document.getElementById('edit-loc').value.trim(),
+    phone: document.getElementById('edit-phone').value.trim(),
+    desc: document.getElementById('edit-desc').value.trim(),
+  };
+  displayCards = [...allCards];
+  renderCards(displayCards);
+  closeModal('edit-modal');
+  showToast('✅ Listing updated!');
+  openDashboard();
+}
+
+function deleteCard(id) {
+  if (!confirm('Yeh listing delete karni hai?')) return;
+  allCards = allCards.filter(f => f.id !== id);
+  displayCards = [...allCards];
+  renderCards(displayCards);
+  showToast('🗑️ Listing deleted!');
+  openDashboard();
 }
 
 // ─────────────────────────────────────────────
@@ -632,24 +761,23 @@ function submitDonation() {
   const name = document.getElementById('food-name').value.trim();
   const qty = document.getElementById('food-qty').value.trim();
   const loc = document.getElementById('food-loc').value.trim();
+  const phone = document.getElementById('food-phone').value.trim();
   const desc = document.getElementById('food-desc').value.trim();
   const cat = document.getElementById('food-cat').value;
-  if (!name || !qty || !loc) { showToast('⚠️ Please fill all required fields', true); return; }
+  if (!name || !qty || !loc || !phone) { showToast('⚠️ Please fill all required fields', true); return; }
   const newCard = {
     id: allCards.length + 1, name, cat, qty, loc,
     desc: desc || 'Freshly donated!', donor: currentUser?.name || 'You',
-    badge: 'fresh', time: 'Just now'
+    phone, badge: 'fresh', time: 'Just now'
   };
   allCards.unshift(newCard);
   displayCards.unshift(newCard);
   renderCards(displayCards);
   closeModal('donate-modal');
   showToast('🎉 Food listed! You\'re a hero!');
-  // Update stats
   const el = document.getElementById('stat-meals');
   el.textContent = (parseInt(el.textContent.replace(',', '')) + parseInt(qty) || 1).toLocaleString();
-  // Clear form
-  ['food-name','food-qty','food-loc','food-desc'].forEach(id => document.getElementById(id).value = '');
+  ['food-name','food-qty','food-loc','food-phone','food-desc'].forEach(id => document.getElementById(id).value = '');
 }
 
 // ─────────────────────────────────────────────
@@ -657,13 +785,15 @@ function submitDonation() {
 // ─────────────────────────────────────────────
 function handleClaim(id, name) {
   if (!isLoggedIn) { openAuthModal('claim'); return; }
-  showToast(`📞 Donor contact sent for "${name}"!`);
-  // Remove card after claiming
-  setTimeout(() => {
-    allCards = allCards.filter(f => f.id !== id);
-    displayCards = displayCards.filter(f => f.id !== id);
-    renderCards(displayCards);
-  }, 1200);
+  const food = allCards.find(f => f.id === id);
+  if (!food) return;
+  // Show contact modal
+  document.getElementById('contact-food-name').textContent = '🍱 ' + food.name;
+  document.getElementById('contact-donor-name').textContent = food.donor;
+  const phone = food.phone || '9876543210';
+  document.getElementById('contact-phone').textContent = phone;
+  document.getElementById('contact-call-btn').href = 'tel:' + phone;
+  openModal('contact-modal');
 }
 
 // ─────────────────────────────────────────────
