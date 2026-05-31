@@ -716,7 +716,7 @@ async function openDashboard() {
     const res = await fetch('/api/foods/my');
     const myFoods = await res.json();
     if (!myFoods.length) {
-      document.getElementById('dashboard-list').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)"><div style="font-size:2.5rem;margin-bottom:12px">🍽️</div><div>Abhi tak koi donation nahi ki.<br>Donate karo aur fark karo!</div></div>';
+      document.getElementById('dashboard-list').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)"><div style="font-size:2.5rem;margin-bottom:12px">🍽️</div><div>No donations yet.<br>Donate and make a difference!</div></div>';
       return;
     }
     document.getElementById('dashboard-list').innerHTML = myFoods.map(f => `
