@@ -186,10 +186,55 @@
     .toast { position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(15,25,15,0.95);border:1px solid rgba(74,222,128,0.4);backdrop-filter:blur(20px);border-radius:50px;padding:14px 28px;color:var(--accent-green);font-weight:600;z-index:300;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);display:flex;align-items:center;gap:10px; }
     .toast.show { transform:translateX(-50%) translateY(0); }
 
+    /* ── ABOUT SECTION ── */
+    .about-section { position:relative;z-index:1;padding:80px 40px;max-width:1300px;margin:0 auto;width:100%; }
+    .section-label { font-size:0.8rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent-teal);margin-bottom:12px; }
+    .about-section h2 { font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:16px;letter-spacing:-1px; }
+    .about-section h2 span { background:linear-gradient(135deg,var(--accent-green),var(--accent-teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    .about-section > p { color:var(--text-muted);font-size:1.05rem;max-width:600px;line-height:1.8;margin-bottom:60px; }
+    .about-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-bottom:60px; }
+    .about-card { background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter:var(--glass-blur);border-radius:var(--radius);padding:28px;box-shadow:var(--card-shadow);transition:transform 0.3s,border-color 0.3s; }
+    .about-card:hover { transform:translateY(-6px);border-color:rgba(74,222,128,0.3); }
+    .about-icon { font-size:2.2rem;margin-bottom:14px;display:block; }
+    .about-card h3 { font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:10px; }
+    .about-card p { font-size:0.88rem;color:var(--text-muted);line-height:1.7; }
+    .team-strip { display:flex;flex-wrap:wrap;gap:16px;align-items:center; }
+    .team-chip { display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:50px;background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter:var(--glass-blur); }
+    .team-chip .av { width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem; }
+    .team-chip span { font-size:0.85rem;font-weight:500; }
+
+    /* ── FOOTER ── */
+    footer { position:relative;z-index:1;background:rgba(10,10,26,0.8);border-top:1px solid var(--glass-border);backdrop-filter:blur(20px);padding:60px 40px 30px; }
+    .footer-inner { max-width:1300px;margin:0 auto; }
+    .footer-top { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px; }
+    .footer-brand .logo-f { font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent-green),var(--accent-teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px; }
+    .footer-brand p { font-size:0.85rem;color:var(--text-muted);line-height:1.7;max-width:280px;margin-bottom:20px; }
+    .social-row { display:flex;gap:10px; }
+    .social-btn { width:38px;height:38px;border-radius:50%;background:var(--glass-bg);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all 0.2s;text-decoration:none; }
+    .social-btn:hover { background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.4);transform:translateY(-2px); }
+    .footer-col h4 { font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:16px;color:var(--text-primary); }
+    .footer-col ul { list-style:none; }
+    .footer-col ul li { margin-bottom:10px; }
+    .footer-col ul li a { color:var(--text-muted);text-decoration:none;font-size:0.85rem;transition:color 0.2s; }
+    .footer-col ul li a:hover { color:var(--accent-green); }
+    .footer-contact-item { display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:0.85rem;color:var(--text-muted); }
+    .footer-contact-item .ic { font-size:1rem;width:20px;text-align:center; }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px; }
+    .footer-bottom p { font-size:0.8rem;color:var(--text-muted); }
+    .footer-bottom p span { color:var(--accent-pink); }
+    .footer-badges { display:flex;gap:8px; }
+    .f-badge { padding:5px 12px;border-radius:50px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);font-size:0.72rem;color:var(--accent-green); }
+
     @media (max-width:900px) {
       nav { padding:14px 20px; }
       .content { flex-direction:column;padding:0 20px 60px; }
       .sidebar { width:100%; }
+      .about-section { padding:60px 20px; }
+      .footer-top { grid-template-columns:1fr 1fr;gap:28px; }
+      footer { padding:50px 20px 24px; }
+    }
+    @media (max-width:560px) {
+      .footer-top { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -239,13 +284,13 @@
     <div class="stat-pill"><span class="icon">♻️</span><span class="val" id="stat-kg">—</span><span class="lbl">Waste Saved</span></div>
   </div>
 
-  <!-- MAIN -->
+  <!-- MAIN FEED -->
   <div class="content" id="feed-section">
     <aside class="sidebar">
       <div class="glass-card">
         <div class="sidebar-title">⚡ Live Updates</div>
         <div id="live-feed">
-          <div class="recent-item"><span class="recent-dot"></span><div class="recent-text"><strong>Waiting for updates...</strong>Real-time activity</div></div>
+          <div class="recent-item"><span class="recent-dot"></span><div class="recent-text"><strong>Connecting...</strong>Real-time activity</div></div>
         </div>
       </div>
       <div class="glass-card" style="background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(45,212,191,0.08));border-color:rgba(74,222,128,0.25);">
@@ -268,7 +313,110 @@
       </div>
     </main>
   </div>
+
+  <!-- ── ABOUT SECTION ── -->
+  <section class="about-section" id="about">
+    <div class="section-label">Our Mission</div>
+    <h2>Why <span>ServeTogether?</span></h2>
+    <p>Every day, millions of meals worth of food gets wasted while people around us go hungry. ServeTogether bridges that gap — one listing at a time.</p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <span class="about-icon">🌱</span>
+        <h3>Zero Food Waste</h3>
+        <p>We help individuals, restaurants, and events share surplus food before it hits the bin. Every meal saved is a step towards a sustainable future.</p>
+      </div>
+      <div class="about-card">
+        <span class="about-icon">🤝</span>
+        <h3>Community First</h3>
+        <p>ServeTogther connects neighbors directly — no middlemen, no fees. Just genuine people helping each other with a simple listing and a phone call.</p>
+      </div>
+      <div class="about-card">
+        <span class="about-icon">⚡</span>
+        <h3>Real-Time Sharing</h3>
+        <p>Our live feed shows donations the moment they happen. Claim fresh food fast before it runs out — no sign-in required to see donor contact details.</p>
+      </div>
+      <div class="about-card">
+        <span class="about-icon">🔒</span>
+        <h3>Safe & Transparent</h3>
+        <p>Donors share their contact info openly. You call, you coordinate, you collect. Simple, safe, and fully transparent — no data sold, ever.</p>
+      </div>
+      <div class="about-card">
+        <span class="about-icon">📱</span>
+        <h3>Easy to Use</h3>
+        <p>List your food in under 2 minutes. Upload a photo, add your number, set your location — and watch it reach people in your neighbourhood instantly.</p>
+      </div>
+      <div class="about-card">
+        <span class="about-icon">🏆</span>
+        <h3>Impact that Counts</h3>
+        <p>Every donation gets tracked. See how many meals you've shared and inspire others around you to do the same. Small acts, massive impact.</p>
+      </div>
+    </div>
+
+    <div class="section-label">The Team</div>
+    <div style="margin-bottom:24px;"><h2 style="margin-bottom:0;">Built with <span>❤️ & code</span></h2></div>
+    <div class="team-strip">
+      <div class="team-chip"><div class="av">N</div><span>Nimit Raj — Founder & Dev</span></div>
+      <div class="team-chip"><div class="av" style="background:linear-gradient(135deg,var(--accent-teal),var(--accent-green));">🌿</div><span>Open Source Community</span></div>
+      <div class="team-chip"><div class="av" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">V</div><span>Volunteers Nationwide</span></div>
+    </div>
+  </section>
 </div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-f">🌿 ServeTogether</div>
+        <p>A community-driven platform to share surplus food, reduce waste, and help those in need. Free, open, and built with love.</p>
+        <div class="social-row">
+          <a href="#" class="social-btn">𝕏</a>
+          <a href="https://github.com/Nimitraj143/servemore" target="_blank" class="social-btn">⌥</a>
+          <a href="#" class="social-btn">💼</a>
+          <a href="#" class="social-btn">📸</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#feed-section" onclick="scrollToFeed()">Browse Food</a></li>
+          <li><a href="#" onclick="openDonateModal()">Donate Food</a></li>
+          <li><a href="#about">How it Works</a></li>
+          <li><a href="#about">Our Mission</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Food Safety Guide</a></li>
+          <li><a href="#">Donor Tips</a></li>
+          <li><a href="#">Community Guidelines</a></li>
+          <li><a href="https://github.com/Nimitraj143/servemore" target="_blank">GitHub Repo</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item"><span class="ic">📧</span>support@servetogether.in</div>
+        <div class="footer-contact-item"><span class="ic">📍</span>New Delhi, India</div>
+        <div class="footer-contact-item"><span class="ic">🕒</span>Mon – Sat, 9am – 6pm</div>
+        <div class="footer-contact-item"><span class="ic">💬</span>Live chat coming soon</div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 ServeTogether. Made with <span>♥</span> in India. All rights reserved.</p>
+      <div class="footer-badges">
+        <span class="f-badge">🌱 Eco Friendly</span>
+        <span class="f-badge">🔒 Privacy First</span>
+        <span class="f-badge">⚡ Open Source</span>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="auth-modal" onclick="closeOutside(event,'auth-modal')">
@@ -389,6 +537,12 @@ socket.on('food-removed', ({ id }) => {
   updateStats();
 });
 
+// ── Live Activity from server simulator ──
+socket.on('live-activity', data => {
+  const emoji = data.action === 'donated' ? '🍱' : '🤲';
+  addLiveUpdate(emoji + ' ' + data.message, data.location || '');
+});
+
 async function checkAuth() {
   try {
     const res = await fetch('/auth/me');
@@ -419,6 +573,10 @@ async function loadFoods() {
     allFoods = await res.json();
     renderCards(allFoods);
     updateStats();
+    // Pre-populate live feed with first few listings
+    allFoods.slice(0, 4).reverse().forEach(f => {
+      addLiveUpdate('🍱 ' + f.title + ' available', f.location || '');
+    });
   } catch(e) {
     document.getElementById('food-grid').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><div>Could not load listings</div></div>';
   }
@@ -454,8 +612,9 @@ function renderCards(foods) {
     const fallback = FALLBACK_IMGS[i % 8];
     const name = f.title || 'Food Item';
     const donorInit = (f.donorName || '?')[0];
+    // Phone from dedicated field (seeded) or from description
     const phoneMatch = (f.description || '').match(/📞\s*(\d{10})/);
-    const phone = phoneMatch ? phoneMatch[1] : '';
+    const phone = f.phone || (phoneMatch ? phoneMatch[1] : '');
     return `
     <div class="food-card">
       <div class="card-img-wrap">
@@ -541,11 +700,6 @@ async function submitDonation() {
 }
 
 function handleClaim(id, title, donorName, donorEmail, phone) {
-  if (!currentUser) {
-    document.getElementById('auth-title').textContent = 'Sign in to Claim';
-    document.getElementById('auth-desc').textContent = 'Login karo aur donor se contact karo!';
-    openModal('auth-modal'); return;
-  }
   document.getElementById('c-food-name').textContent = '🍱 ' + title;
   document.getElementById('c-donor-name').textContent = donorName;
   document.getElementById('c-phone').textContent = phone || 'N/A';
@@ -622,10 +776,10 @@ function addLiveUpdate(name, loc) {
   const item = document.createElement('div');
   item.className = 'recent-item';
   item.style.opacity = '0';
-  item.innerHTML = '<span class="recent-dot" style="background:' + color + '"></span><div class="recent-text"><strong>' + name + '</strong>' + loc + ' — just now</div>';
+  item.innerHTML = '<span class="recent-dot" style="background:' + color + '"></span><div class="recent-text"><strong>' + name + '</strong>' + (loc ? loc + ' — just now' : 'just now') + '</div>';
   feed.insertBefore(item, feed.firstChild);
   setTimeout(() => { item.style.cssText += 'opacity:1;transition:opacity 0.4s'; }, 50);
-  if (feed.children.length > 5) feed.removeChild(feed.lastChild);
+  while (feed.children.length > 6) feed.removeChild(feed.lastChild);
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
