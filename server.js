@@ -7,6 +7,8 @@ const cors = require('cors');
 const path = require('path');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fs = require('fs');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -192,14 +194,20 @@ app.get('/auth/me', (req, res) => {
 });
 
 // ─── Multer ───────────────────────────────────────────────────
-if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads');
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './uploads'),
-  filename:    (req, file, cb) => cb(null, `food_${Date.now()}${path.extname(file.originalname)}`)
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:           'servemore',
+    allowed_formats:  ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+  },
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
-
 // ─── Food Routes ──────────────────────────────────────────────
 app.get('/api/foods', async (req, res) => {
   try {
@@ -222,7 +230,7 @@ app.post('/api/foods', requireAuth, upload.single('image'), async (req, res) => 
       title, description, category,
       quantity: parseInt(quantity) || 1,
       location,
-      image:      req.file ? `/uploads/${req.file.filename}` : null,
+      image: req.file ? req.file.path : null,
       donorId:    req.user.googleId,
       donorName:  req.user.displayName,
       donorEmail: req.user.email,
@@ -250,7 +258,7 @@ app.put('/api/foods/:id', requireAuth, upload.single('image'), async (req, res) 
     if (category)    food.category    = category;
     if (quantity)    food.quantity    = parseInt(quantity);
     if (location)    food.location    = location;
-    if (req.file)    food.image       = `/uploads/${req.file.filename}`;
+    if (req.file)    food.image       = req.file.path;
     await food.save();
     io.emit('food-updated', food);
     res.json(food);
