@@ -329,7 +329,7 @@
       <div class="about-card">
         <span class="about-icon">🤝</span>
         <h3>Community First</h3>
-        <p>ServeTogther connects neighbors directly — no middlemen, no fees. Just genuine people helping each other with a simple listing and a phone call.</p>
+        <p>ServeTogether connects neighbors directly — no middlemen, no fees. Just genuine people helping each other with a simple listing and a phone call.</p>
       </div>
       <div class="about-card">
         <span class="about-icon">⚡</span>
@@ -468,7 +468,7 @@
   <div class="modal" style="max-width:380px;text-align:center;">
     <span class="modal-icon">📞</span>
     <h2 id="c-food-name" style="margin-bottom:8px;font-size:1.3rem;"></h2>
-    <p style="margin-bottom:20px;">Donor ki contact details — seedha call karke pickup coordinate karo!</p>
+    <p style="margin-bottom:20px;">Donor's contact details — call directly to coordinate pickup!</p>
     <div class="contact-box">
       <div style="font-size:0.82rem;color:var(--text-muted);">Donor</div>
       <div id="c-donor-name" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:12px;"></div>
@@ -556,7 +556,7 @@ async function checkAuth() {
       socket.on('donor-notify-' + data.id, d => showToast('🔔 ' + d.message));
       const params = new URLSearchParams(window.location.search);
       if (params.get('auth') === 'success') {
-        showToast('🎉 Google se login ho gaye!');
+        showToast('🎉 Logged in with Google!');
         window.history.replaceState({}, '', '/');
         if (sessionStorage.getItem('pendingDonate') === '1') {
           sessionStorage.removeItem('pendingDonate');
@@ -663,7 +663,7 @@ function openDonateModal() {
   if (!currentUser) {
     sessionStorage.setItem('pendingDonate','1');
     document.getElementById('auth-title').textContent = 'Sign in to Donate';
-    document.getElementById('auth-desc').textContent = 'Quick Google login — phir apna donation list karo!';
+    document.getElementById('auth-desc').textContent = 'Quick Google login — then list your donation!';
     openModal('auth-modal'); return;
   }
   openModal('donate-modal');
@@ -674,7 +674,7 @@ async function submitDonation() {
   const qty   = document.getElementById('d-qty').value.trim();
   const loc   = document.getElementById('d-loc').value.trim();
   const phone = document.getElementById('d-phone').value.trim();
-  if (!name || !qty || !loc || !phone) { showToast('⚠️ Saari required fields bharo!', true); return; }
+  if (!name || !qty || !loc || !phone) { showToast('⚠️ Please fill all required fields!', true); return; }
   const btn = document.getElementById('donate-btn');
   btn.disabled = true; btn.textContent = 'Listing...';
   const form = new FormData();
@@ -724,7 +724,7 @@ async function openDashboard() {
         <div class="dash-item-info">
           <div class="dash-item-name">${f.title || 'Food Item'}</div>
           <div class="dash-item-meta">📍 ${f.location||'—'} &nbsp;|&nbsp; 🍽️ ${f.quantity} servings &nbsp;|&nbsp; 🕒 ${timeAgo(f.createdAt)}</div>
-          <div class="dash-item-meta" style="margin-top:4px;">${f.claimedBy?.length ? '👥 ' + f.claimedBy.length + ' ne claim kiya' : '⏳ Kisi ne claim nahi kiya'}</div>
+          <div class="dash-item-meta" style="margin-top:4px;">${f.claimedBy?.length ? '👥 Claimed by ' + f.claimedBy.length : '⏳ Not claimed yet'}</div>
         </div>
         <span class="dash-status ${f.status||'available'}">${(f.status||'available') === 'available' ? '🟢 Available' : '✅ Grabbed'}</span>
         <div class="dash-actions">
@@ -755,16 +755,16 @@ async function saveEdit() {
   form.append('description', document.getElementById('e-desc').value.trim());
   try {
     const res = await fetch('/api/foods/' + id, { method:'PUT', body: form });
-    if (res.ok) { closeModal('edit-modal'); showToast('✅ Listing update ho gayi!'); openDashboard(); }
+    if (res.ok) { closeModal('edit-modal'); showToast('✅ Listing updated!'); openDashboard(); }
     else { showToast('❌ Update failed', true); }
   } catch(e) { showToast('❌ Network error', true); }
 }
 
 async function deleteFood(id) {
-  if (!confirm('Yeh listing delete karni hai?')) return;
+  if (!confirm('Delete this listing?')) return;
   try {
     const res = await fetch('/api/foods/' + id, { method:'DELETE' });
-    if (res.ok) { showToast('🗑️ Listing delete ho gayi!'); openDashboard(); }
+    if (res.ok) { showToast('🗑️ Listing deleted!'); openDashboard(); }
     else { showToast('❌ Delete failed', true); }
   } catch(e) { showToast('❌ Network error', true); }
 }

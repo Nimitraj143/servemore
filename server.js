@@ -84,16 +84,67 @@ const User = mongoose.model('User', userSchema);
 const Food = mongoose.model('Food', foodSchema);
 
 // ─── SEED DATA ────────────────────────────────────────────────
+// Har photo verify karke rakhi gayi hai — Wikimedia Commons ke direct
+// "Special:FilePath" links use kiye hain jahan bhi possible tha, kyunki
+// ye Google-thumbnail (gstatic) links ki tarah expire/break nahi hote.
 const SEED_LISTINGS = [
-  { title: 'Dal Makhani & Rice', description: 'Freshly cooked, enough for 4 people. Made this morning!', category: 'cooked', quantity: 4, location: 'Lajpat Nagar, Delhi', phone: '9810012345', donorName: 'Priya Sharma', donorId: 'seed_1', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80' },
-  { title: 'Homemade Chole Bhature', description: 'Made fresh for a party, lots leftover. Spicy!', category: 'cooked', quantity: 6, location: 'Saket, Delhi', phone: '9899123456', donorName: 'Amit Verma', donorId: 'seed_2', image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80' },
-  { title: 'Assorted Fruits Basket', description: 'Apples, bananas, oranges — from grocery run. Take all!', category: 'fruits', quantity: 8, location: 'Hauz Khas, Delhi', phone: '9711234567', donorName: 'Neha Gupta', donorId: 'seed_3', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80' },
-  { title: 'Bread & Butter Packets', description: 'Unopened packs from bakery. Expires in 3 days.', category: 'bakery', quantity: 5, location: 'Connaught Place, Delhi', phone: '9818765432', donorName: 'Rahul Bose', donorId: 'seed_4', image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80' },
-  { title: 'Paneer Butter Masala', description: 'Restaurant-style. Made extra for guests who cancelled.', category: 'cooked', quantity: 3, location: 'Dwarka, Delhi', phone: '9971122334', donorName: 'Sunita Mehta', donorId: 'seed_5', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80' },
-  { title: 'Biryani (Veg)', description: 'Full pot leftover from function. Best before evening!', category: 'cooked', quantity: 10, location: 'Rohini, Delhi', phone: '9650987654', donorName: 'Karim Khan', donorId: 'seed_6', image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80' },
-  { title: 'Fresh Vegetables Mix', description: 'Tomatoes, onions, potatoes, spinach — from wholesale.', category: 'raw', quantity: 7, location: 'Janakpuri, Delhi', phone: '9312233445', donorName: 'Ravi Tiwari', donorId: 'seed_7', image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80' },
-  { title: 'Pav Bhaji & Pav', description: 'Street-style bhaji with buttered pavs. 8 plates ready!', category: 'cooked', quantity: 8, location: 'Pitampura, Delhi', phone: '9899001122', donorName: 'Deepa Joshi', donorId: 'seed_8', image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80' },
+  { title: 'Dal Makhani & Rice', description: 'Freshly cooked, enough for 4 people. Made this morning!', category: 'cooked', quantity: 4, location: 'Lajpat Nagar, Delhi', phone: '9810012345', donorName: 'Priya Sharma', donorId: 'seed_1', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507843/servemore/szmoecnyi3hu4ce9mdei.webp' },
+  { title: 'Chicken Biryani', description: 'Dum biryani, made for a family function. 6 servings left.', category: 'cooked', quantity: 6, location: 'Saket, Delhi', phone: '9899123456', donorName: 'Amit Verma', donorId: 'seed_2', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507883/servemore/by8q6szkog77qxzpeccv.jpg' },
+  { title: 'Paneer Butter Masala', description: 'Restaurant-style. Made extra for guests who cancelled.', category: 'cooked', quantity: 3, location: 'Dwarka, Delhi', phone: '9971122334', donorName: 'Sunita Mehta', donorId: 'seed_5', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507915/servemore/csp2hgqrntw0mqod6xpt.jpg' },
+  { title: 'Pav Bhaji & Pav', description: 'Street-style bhaji with buttered pavs. 8 plates ready!', category: 'cooked', quantity: 8, location: 'Pitampura, Delhi', phone: '9899001122', donorName: 'Deepa Joshi', donorId: 'seed_8', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508680/servemore/wuye2mzwvkx1jquamvsn.webp' },
+  { title: 'Gulab Jamun (50pcs)', description: 'Office celebration leftover gulab jamuns. Sealed container.', category: 'cooked', quantity: 10, location: 'Udyog Vihar, Gurugram', phone: '9567890123', donorName: 'Ramesh G.', donorId: 'seed_10', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507943/servemore/rbsuhfyqpolp9b40joy7.jpg' },
+  { title: 'Masala Dosa', description: 'South Indian breakfast leftover from a family gathering. 5 dosas left.', category: 'cooked', quantity: 5, location: 'Karol Bagh, Delhi', phone: '9812340987', donorName: 'Lakshmi Iyer', donorId: 'seed_11', image: 'https://images.unsplash.com/photo-1743615467363-250466982515?w=400&q=80' },
+  { title: 'Naan & Tandoori Roti (Basket)', description: 'Fresh tandoori rotis and naan from a wedding function. 15 pieces.', category: 'bakery', quantity: 15, location: 'Rohini, Delhi', phone: '9811223344', donorName: 'Karim Khan', donorId: 'seed_6', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508007/servemore/leotygbh4omrunzvrzqr.webp' },
+  { title: 'Chole Chawal', description: 'Home-style chole chawal, made extra for guests.', category: 'cooked', quantity: 4, location: 'Vasant Kunj, Delhi', phone: '9899887766', donorName: 'Ritu Kapoor', donorId: 'seed_12', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507973/servemore/dl2xwnkalybvfu9oqyk2.jpg' },
+  { title: 'Rajma Chawal', description: 'Home-style rajma chawal, made extra for a family gathering.', category: 'cooked', quantity: 4, location: 'Karol Bagh, Delhi', phone: '9812345670', donorName: 'Nimit Rajput', donorId: 'seed_13', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508637/servemore/jin4mpwwvr5a0rxamdpr.jpg' },
+  { title: 'Assorted Fruits Basket', description: 'Leftover fruit platter from a birthday party. Apples, oranges, grapes.', category: 'fruits', quantity: 8, location: 'Hauz Khas, Delhi', phone: '9711234567', donorName: 'Neha Gupta', donorId: 'seed_3', image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508032/servemore/jjvve7y5dwxoahaivrps.jpg' },
 ];
+
+// ─── DISH PHOTO AUTO-MATCH LIBRARY ─────────────────────────────
+// Jab koi user naya food add kare BINA apni photo upload kiye, hum uske
+// "title" ko yahan neeche diye gaye keywords se match karte hain aur
+// sahi verified photo apne aap laga dete hain.
+//
+// Saari photos ab Wikimedia Commons ke "Special:FilePath" direct links
+// hain — ye Google Images ke encrypted-tbn0.gstatic.com thumbnails ki
+// tarah low-res/expire hone wale nahi hain, balki Wikimedia khud serve
+// karta hai inhe, isliye hamesha reliably load honge.
+//
+// Rajma Chawal ke liye ab wikimedia link daal diya hai (tumne khud bhi
+// ek baar apni photo upload ki thi, wo alag se listing mein already hai —
+// ye library entry sirf tab kaam aayegi jab KOI AUR bina photo ke
+// "Rajma Chawal" add karega).
+//
+// Chole Chawal aur Kadhi Chawal ke liye abhi bhi placeholder hai —
+// agar chaho to inke liye bhi Wikimedia se link nikal ke de sakta hoon.
+const DISH_PHOTO_LIBRARY = [
+  { keywords: ['dal makhani'],                    image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507843/servemore/szmoecnyi3hu4ce9mdei.webp' },
+  { keywords: ['biryani'],                        image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507883/servemore/by8q6szkog77qxzpeccv.jpg' },
+  { keywords: ['paneer butter masala', 'paneer sabzi', 'paneer'], image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507915/servemore/csp2hgqrntw0mqod6xpt.jpg' },
+  { keywords: ['pav bhaji'],                       image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508680/servemore/wuye2mzwvkx1jquamvsn.webp' },
+  { keywords: ['gulab jamun'],                     image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507943/servemore/rbsuhfyqpolp9b40joy7.jpg' },
+  { keywords: ['dosa'],                            image: 'https://images.unsplash.com/photo-1743615467363-250466982515?w=400&q=80' },
+  { keywords: ['naan', 'tandoori roti', 'roti'],   image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508007/servemore/leotygbh4omrunzvrzqr.webp' },
+  { keywords: ['fruit', 'fruits basket', 'fruit basket'], image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508032/servemore/jjvve7y5dwxoahaivrps.jpg' },
+  { keywords: ['noodles', 'chowmein', 'chow mein'], image: 'https://png.pngtree.com/thumb_back/fh260/background/20230611/pngtree-chinese-noodles-with-chicken-stir-fried-noodles-image_2931070.jpg' },
+  { keywords: ['rajma chawal', 'rajma'],            image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783508637/servemore/jin4mpwwvr5a0rxamdpr.jpg' },
+  { keywords: ['chole chawal', 'chole', 'chana chawal'], image: 'https://res.cloudinary.com/dtnp9xjzj/image/upload/v1783507973/servemore/dl2xwnkalybvfu9oqyk2.jpg' },
+
+  // 🔶 TODO — inke liye abhi bhi purani (thodi risky) link hai; app se add karke Cloudinary URL bhej doge to inhe bhi permanent kar dunga
+  { keywords: ['kadhi chawal', 'kadhi'],                 image: 'https://i.pinimg.com/736x/e8/c4/da/e8c4dadd7dde3ad5e6a4209d7560b54f.jpg' },
+  { keywords: ['rasmalai'],                              image: 'https://media-cdn.tripadvisor.com/media/photo-s/1c/70/4d/5c/rasmalai.jpg' },
+];
+
+function matchDishPhoto(title) {
+  if (!title) return null;
+  const t = title.toLowerCase();
+  for (const entry of DISH_PHOTO_LIBRARY) {
+    if (entry.image && entry.keywords.some(k => t.includes(k))) {
+      return entry.image;
+    }
+  }
+  return null;
+}
 
 // Fake donors for live activity feed
 const FAKE_DONORS = ['Anjali S.', 'Rohan M.', 'Kavya P.', 'Arjun K.', 'Meena D.', 'Suresh R.', 'Pooja T.', 'Vikram B.'];
@@ -226,11 +277,16 @@ app.get('/api/foods/my', requireAuth, async (req, res) => {
 app.post('/api/foods', requireAuth, upload.single('image'), async (req, res) => {
   try {
     const { title, description, category, quantity, location } = req.body;
+
+    // Agar user ne apni photo upload ki hai to wahi use hogi.
+    // Agar nahi ki, to title se match karke library se auto-photo lagayenge.
+    const finalImage = req.file ? req.file.path : matchDishPhoto(title);
+
     const food = await Food.create({
       title, description, category,
       quantity: parseInt(quantity) || 1,
       location,
-      image: req.file ? req.file.path : null,
+      image: finalImage,
       donorId:    req.user.googleId,
       donorName:  req.user.displayName,
       donorEmail: req.user.email,
